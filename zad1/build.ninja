@@ -1,0 +1,47 @@
+ninja_required_version = 1.5
+
+build_dir = build
+target_dir = bin
+
+########################################
+
+commonflags = -O3 -march=native -pipe -Wall -Wextra -Wconversion -Wpedantic -Wno-sign-compare -fPIC -flto -s
+cxxflags = -std=c++17 $commonflags
+cflags = -std=c11 $commonflags
+linkflags = -pie
+
+rule cc
+    description = Compiling $in
+    command = c++ $cxxflags -MMD -MF $out.d -c -o $out $in
+    depfile = $out.d
+
+rule cclink
+    description = Linking $in
+    command = c++ $cxxflags $linkflags -o $out $in $libs
+
+rule c
+    description = Compiling $in
+    command = cc $cflags -MMD -MF $out.d -c -o $out $in
+    depfile = $out.d
+
+rule clink
+    description = Linking $in
+    command = cc $cflags $linkflags -o $out $in $libs
+
+########################################
+
+rule run
+    command = ./$in
+    pool = console
+    description = Running $in
+
+########################################
+
+build $target_dir/main.x: cclink $build_dir/main.o
+    libs = -lgsl -lm
+build $build_dir/main.o: cc src/main.cxx
+default $target_dir/main.x
+
+########################################
+
+build run: run $target_dir/main.x

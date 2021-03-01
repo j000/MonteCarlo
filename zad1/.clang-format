@@ -1,0 +1,47 @@
+---
+# BasedOnStyle: Mozilla
+BasedOnStyle: Webkit
+ColumnLimit: 80
+IndentWidth: 4
+ContinuationIndentWidth: 4
+TabWidth: 4
+UseTab: Always
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+# BreakBeforeBraces: Attach
+BreakBeforeBraces: WebKit
+AllowShortFunctionsOnASingleLine: None
+# SortIncludes: false
+AlignTrailingComments: false
+# AlignAfterOpenBracket: AlwaysBreak
+AlignAfterOpenBracket: DontAlign
+AlignOperands: false
+# PenaltyBreakBeforeFirstCallParameter: 0
+ObjCBlockIndentWidth: 4
+IndentCaseLabels: false
+SpaceAfterTemplateKeyword: true
+PenaltyReturnTypeOnItsOwnLine: 60
+# BreakConstructorInitializers: AfterColon
+BreakConstructorInitializers: BeforeComma
+BreakBeforeBinaryOperators: All
+BreakBeforeInheritanceComma: false
+BreakInheritanceList: BeforeComma
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+Cpp11BracedListStyle: true
+SpaceBeforeCpp11BracedList: false
+AccessModifierOffset: -4
+ConstructorInitializerIndentWidth: 4
+AlwaysBreakTemplateDeclarations: true
+AlignEscapedNewlines: Left
+BinPackArguments: false
+BinPackParameters: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AlignAfterOpenBracket: AlwaysBreak
+---
+Language: Java
+ReflowComments: false
+AllowShortFunctionsOnASingleLine: None
+BreakAfterJavaFieldAnnotations: true
+...
