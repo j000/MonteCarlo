@@ -1,4 +1,4 @@
-#include <array>
+#include <vector>
 #include <cmath>
 #include <gsl/gsl_randist.h>
 #include <iomanip>
@@ -6,8 +6,8 @@
 #include <numeric>
 #include <sys/time.h>
 
-constexpr int N{1 << 12};
-constexpr int DIMS{2};
+constexpr int N{100'000'000};
+constexpr int DIMS{4};
 
 constexpr double pi()
 {
@@ -16,7 +16,9 @@ constexpr double pi()
 
 int main(int, char**)
 {
-	auto generator = gsl_rng_alloc(gsl_rng_ranlux);
+	// https://www.gnu.org/software/gsl/doc/html/rng.html?highlight=ranlux#performance
+	// auto generator = gsl_rng_alloc(gsl_rng_ranlxs2); // slowest
+	auto generator = gsl_rng_alloc(gsl_rng_taus2); // fastest
 
 	{ // Seed generation based on time
 		struct timeval tv;
@@ -25,7 +27,7 @@ int main(int, char**)
 		gsl_rng_set(generator, seed);
 	}
 
-	std::array<double, N> sum{};
+	std::vector<double> sum(N, 0.);
 
 	for (auto& i : sum) {
 		auto result{1.};
