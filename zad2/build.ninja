@@ -1,0 +1,105 @@
+ninja_required_version = 1.5
+
+build_dir = build
+target_dir = bin
+CXX = clang++
+CC = gcc
+
+########################################
+
+warnings = -Wall -Wextra -Wconversion -Wpedantic -Wno-sign-compare
+commonflags = -O3 -march=native -pipe -fPIC -flto
+cxxflags = -std=c++20 $commonflags
+cflags = -std=c11 $commonflags
+linkflags = -pie -s
+
+rule cc
+    description = Compiling $in
+    command = $CXX $cxxflags -MMD -MF $out.d -c -o $out $in
+    depfile = $out.d
+
+rule cclink
+    description = Linking $in
+    command = $CXX $cxxflags $linkflags -o $out $in $libs
+
+rule c
+    description = Compiling $in
+    command = $CC $cflags -MMD -MF $out.d -c -o $out $in
+    depfile = $out.d
+
+rule clink
+    description = Linking $in
+    command = $CC $cflags $linkflags -o $out $in $libs
+
+########################################
+
+rule redirect
+    description = Generating data: $out
+    command = $in > $out
+
+rule plot
+    description = Plotting $out
+    command = gnuplot -e 'set output "$out"' -e 'filename="$data"' $script
+
+########################################
+
+rule run
+    command = ./$in
+    pool = console
+    description = Running $in
+
+########################################
+
+build $build_dir/generator.o: cc src/generator.cxx
+    cxxflags = $cxxflags -fopenmp
+
+########################################
+
+build $target_dir/hist.x: cclink $build_dir/hist.o
+    cxxflags = $cxxflags -fopenmp
+    libs = -lgsl -lm
+build $build_dir/hist.o: cc src/hist.cxx
+    cxxflags = $cxxflags -fopenmp
+default $target_dir/hist.x
+
+build $target_dir/hist.dat: redirect $target_dir/hist.x
+default $target_dir/hist.dat
+
+build $target_dir/hist.png: plot $target_dir/hist.dat src/hist.plot
+    script = src/hist.plot
+    data = $target_dir/hist.dat
+default $target_dir/hist.png
+
+########################################
+
+build $target_dir/inverse.x: cclink $build_dir/inverse.o
+    cxxflags = $cxxflags -fopenmp
+    libs = -lgsl -lm
+build $build_dir/inverse.o: cc src/inverse.cxx
+    cxxflags = $cxxflags -fopenmp
+default $target_dir/inverse.x
+
+build $target_dir/inverse.dat: redirect $target_dir/inverse.x
+default $target_dir/inverse.dat
+
+build $target_dir/inverse.png: plot $target_dir/inverse.dat src/inverse.plot
+    script = src/inverse.plot
+    data = $target_dir/inverse.dat
+default $target_dir/inverse.png
+
+########################################
+
+build $target_dir/normal.x: cclink $build_dir/normal.o $build_dir/generator.o
+    cxxflags = $cxxflags -fopenmp
+    libs = -lgsl -lm
+build $build_dir/normal.o: cc src/normal.cxx
+    cxxflags = $cxxflags -fopenmp
+default $target_dir/normal.x
+
+build $target_dir/normal.dat: redirect $target_dir/normal.x
+default $target_dir/normal.dat
+
+build $target_dir/normal.png: plot $target_dir/normal.dat src/normal.plot
+    script = src/normal.plot
+    data = $target_dir/normal.dat
+default $target_dir/normal.png
