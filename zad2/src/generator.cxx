@@ -28,9 +28,7 @@ Generator::Generator()
 Generator::~Generator()
 {
 #pragma omp parallel
-	{
-		gsl_rng_free(m_generator);
-	}
+	gsl_rng_free(m_generator);
 }
 
 double Generator::operator()()

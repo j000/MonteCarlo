@@ -1,5 +1,5 @@
 # set term pngcairo background "#171111" size 1200,900 font 'Input Mono'
-set term png background "#171111" size 1920,1080 font 'Input Mono'
+set term png background "#171111" size 1200,900 font 'Input Mono'
 
 ########################################
 # line styles for ColorBrewer Set3
@@ -29,7 +29,3 @@ unset xzeroaxis
 set style data linespoints
 set datafile separator ","
 set key autotitle columnhead
-
-set yrange [0:]
-set xtics 0.1
-plot filename using 1:2, filename using 1:3 pt 0, filename using 1:4

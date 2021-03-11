@@ -8,7 +8,7 @@ CC = gcc
 ########################################
 
 warnings = -Wall -Wextra -Wconversion -Wpedantic -Wno-sign-compare
-commonflags = -O3 -march=native -pipe -fPIC -flto
+commonflags = -O3 -march=native -pipe -fPIC -flto -fopenmp
 cxxflags = -std=c++20 $commonflags
 cflags = -std=c11 $commonflags
 linkflags = -pie -s
@@ -37,9 +37,11 @@ rule redirect
     description = Generating data: $out
     command = $in > $out
 
+gnuplot_common = src/common.gpi
+
 rule plot
     description = Plotting $out
-    command = gnuplot -e 'set output "$out"' -e 'filename="$data"' $script
+    command = gnuplot -e 'set output "$out"' $in
 
 ########################################
 
@@ -51,55 +53,30 @@ rule run
 ########################################
 
 build $build_dir/generator.o: cc src/generator.cxx
-    cxxflags = $cxxflags -fopenmp
 
 ########################################
 
-build $target_dir/hist.x: cclink $build_dir/hist.o
-    cxxflags = $cxxflags -fopenmp
+build $target_dir/hist.png: plot $gnuplot_common $target_dir/hist.gpi
+build $target_dir/hist.gpi: redirect $target_dir/hist.x
+build $target_dir/hist.x: cclink $build_dir/hist.o $build_dir/generator.o
     libs = -lgsl -lm
 build $build_dir/hist.o: cc src/hist.cxx
-    cxxflags = $cxxflags -fopenmp
-default $target_dir/hist.x
-
-build $target_dir/hist.dat: redirect $target_dir/hist.x
-default $target_dir/hist.dat
-
-build $target_dir/hist.png: plot $target_dir/hist.dat src/hist.plot
-    script = src/hist.plot
-    data = $target_dir/hist.dat
 default $target_dir/hist.png
 
 ########################################
 
-build $target_dir/inverse.x: cclink $build_dir/inverse.o
-    cxxflags = $cxxflags -fopenmp
+build $target_dir/inverse.png: plot $gnuplot_common $target_dir/inverse.gpi
+build $target_dir/inverse.gpi: redirect $target_dir/inverse.x
+build $target_dir/inverse.x: cclink $build_dir/inverse.o $build_dir/generator.o
     libs = -lgsl -lm
 build $build_dir/inverse.o: cc src/inverse.cxx
-    cxxflags = $cxxflags -fopenmp
-default $target_dir/inverse.x
-
-build $target_dir/inverse.dat: redirect $target_dir/inverse.x
-default $target_dir/inverse.dat
-
-build $target_dir/inverse.png: plot $target_dir/inverse.dat src/inverse.plot
-    script = src/inverse.plot
-    data = $target_dir/inverse.dat
 default $target_dir/inverse.png
 
 ########################################
 
+build $target_dir/normal.png: plot $gnuplot_common $target_dir/normal.gpi
+build $target_dir/normal.gpi: redirect $target_dir/normal.x
 build $target_dir/normal.x: cclink $build_dir/normal.o $build_dir/generator.o
-    cxxflags = $cxxflags -fopenmp
     libs = -lgsl -lm
 build $build_dir/normal.o: cc src/normal.cxx
-    cxxflags = $cxxflags -fopenmp
-default $target_dir/normal.x
-
-build $target_dir/normal.dat: redirect $target_dir/normal.x
-default $target_dir/normal.dat
-
-build $target_dir/normal.png: plot $target_dir/normal.dat src/normal.plot
-    script = src/normal.plot
-    data = $target_dir/normal.dat
 default $target_dir/normal.png
