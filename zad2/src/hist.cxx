@@ -27,12 +27,12 @@ int main(int, char**)
 	double max = *std::max_element(hist.begin(), hist.end());
 
 	std::cout << std::scientific;
-	std::cout << "$DATABLOCK << EOD" << std::endl;
-	std::cout << "random generator" << std::endl;
+	std::cout << "$DATABLOCK << EOD\n";
+	std::cout << "random generator\n";
 	for (std::size_t i = 0, e = hist.size(); i != e; ++i) {
-		std::cout << hist[i] / max << std::endl;
+		std::cout << hist[i] / max << '\n';
 	}
-	std::cout << "EOD" << std::endl;
+	std::cout << "EOD\n";
 
 	std::cout << R"GNUPLOT(
 set yrange [0:]

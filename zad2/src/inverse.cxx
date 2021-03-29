@@ -44,12 +44,12 @@ int main(int, char**)
 
 	std::cout << std::scientific;
 	std::cout << "$DATABLOCK << EOD" << std::endl;
-	std::cout << "inverse,inverse\\_accepted" << std::endl;
+	std::cout << "inverse,inverse\\\\_accepted" << std::endl;
 	for (std::size_t i = 0, e = inverse.size(); i != e; ++i) {
 		std::cout << inverse[i] / (X_MAX * N / BINS) << ","
-				  << inverse_accepted[i] / points_per_slot << std::endl;
+				  << inverse_accepted[i] / points_per_slot << '\n';
 	}
-	std::cout << "EOD" << std::endl;
+	std::cout << "EOD\n";
 
 	std::cout << R"GNUPLOT(
 set yrange [0:]

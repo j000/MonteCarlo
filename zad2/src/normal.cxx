@@ -66,8 +66,8 @@ int main(int, char**)
 
 	std::cout << std::scientific;
 	std::cout << "$DATABLOCK << EOD" << std::endl;
-	std::cout << "axis,normal (" << in_range << "),normal\\\\_accepted ("
-			  << accepted << "),analitical" << std::endl;
+	std::cout << "axis,Box-Muller transform (" << in_range << "),Reject method ("
+			  << accepted << "),Analitical\n";
 
 	for (std::size_t i = 0; i != BINS; ++i) {
 		// 0-1
@@ -88,6 +88,8 @@ int main(int, char**)
 set yrange [0:]
 set xtics 0.1
 set key bottom right
-plot $DATABLOCK using 1:2, $DATABLOCK using 1:3 pt 0, $DATABLOCK using 1:4
+plot $DATABLOCK using 1:2, \
+	'' using 1:3 pt 0, \
+	'' using 1:4 with points pt 3
 )GNUPLOT";
 }

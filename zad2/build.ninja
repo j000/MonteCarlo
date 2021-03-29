@@ -45,13 +45,6 @@ rule plot
 
 ########################################
 
-rule run
-    command = ./$in
-    pool = console
-    description = Running $in
-
-########################################
-
 build $build_dir/generator.o: cc src/generator.cxx
 
 ########################################
