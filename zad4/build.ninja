@@ -1,0 +1,69 @@
+ninja_required_version = 1.5
+
+build_dir = build
+target_dir = bin
+CXX = clang++
+CC = gcc
+
+########################################
+
+warnings = -Wall -Wextra -Wconversion -Wpedantic -Wno-sign-compare
+commonflags = -O3 -march=native -pipe -fPIC -flto -fopenmp
+cxxflags = -std=c++20 $commonflags
+cflags = -std=c11 $commonflags
+linkflags = -pie -s
+
+rule cc
+    description = Compiling $in
+    command = $CXX $cxxflags -MMD -MF $out.d -c -o $out $in
+    depfile = $out.d
+
+rule cclink
+    description = Linking $in
+    command = $CXX $cxxflags $linkflags -o $out $in $libs
+
+rule c
+    description = Compiling $in
+    command = $CC $cflags -MMD -MF $out.d -c -o $out $in
+    depfile = $out.d
+
+rule clink
+    description = Linking $in
+    command = $CC $cflags $linkflags -o $out $in $libs
+
+########################################
+
+rule redirect
+    description = Generating data: $out
+    command = $in > $out
+
+gnuplot_common = src/common.gpi
+
+rule plot
+    description = Plotting $out
+    command = gnuplot -e 'set output "$out"' $in
+
+########################################
+
+build $build_dir/generator.o: cc generator.cxx
+
+########################################
+
+# build $target_dir/hist.png: plot $gnuplot_common $target_dir/hist.gpi
+# build $target_dir/hist.gpi: redirect $target_dir/hist.x
+# build $target_dir/hist.x: cclink $build_dir/hist.o $build_dir/generator.o
+#     libs = -lgsl -lm
+# build $build_dir/hist.o: cc src/hist.cxx
+# default $target_dir/hist.png
+
+########################################
+
+build $target_dir/metropolis.x: cclink $build_dir/metropolis.o $build_dir/generator.o
+    libs = -lgsl -lm
+build $build_dir/metropolis.o: cc metropolis.cxx
+default $target_dir/metropolis.x
+
+build $target_dir/transition_matrix_metropolis.x: cclink $build_dir/transition_matrix_metropolis.o $build_dir/generator.o
+    libs = -lgsl -lm
+build $build_dir/transition_matrix_metropolis.o: cc transition_matrix_metropolis.cxx
+default $target_dir/transition_matrix_metropolis.x
